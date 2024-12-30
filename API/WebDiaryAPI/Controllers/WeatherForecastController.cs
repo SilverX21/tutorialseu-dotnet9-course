@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebDiaryAPI.Controllers;
+
 [ApiController]
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
@@ -17,6 +18,7 @@ public class WeatherForecastController : ControllerBase
         _logger = logger;
     }
 
+    // [HttpGet(Name = "GetWeatherForecast")] -> sets the name of this endpoint, if we want to use this endpoint we need to call it using this name
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
