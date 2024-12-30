@@ -1,0 +1,52 @@
+﻿@model DiaryEntry
+
+@{
+    ViewData["Title"] = "Create entry";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2>Create Diary Entry</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <!--The asp-validation-summary="All" will show all of the validations for your model, these are based on what we have in our class :)-->
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="form-label">Title</label>
+                            <input asp-for="Title" class="form-control" placeholder="Enter a title" type="text"  />
+                            <!--we can also do something like this, it's a simpler way to add validation and this only focus for a given property of the model-->
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Content" class="form-label">Content</label>
+                            <input asp-for="Content" row="5" class="form-control" placeholder="Enter what you did that day" type="text" />
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Created" class="form-label">Date</label>
+                            <input asp-for="Created" class="form-control" type="date" />
+                            <span asp-validation-for="Created" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                            <a asp-controller="DiaryEntries" asp-action="Index" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Here we are using the partial "_ValidationScriptsPartial" to use the jquery validate-->
+<!--we can use the section Scripts to use the scripts that are inside the given view-->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
