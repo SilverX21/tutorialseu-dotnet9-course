@@ -1,3 +1,8 @@
+using DevSpot.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
 namespace DevSpot;
 
 public class Program
@@ -5,6 +10,20 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        {
+            options.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
+            options.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+        });
+
+        //IdentityUser is the default user we see in the database table, it's the default :)
+        builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+        {
+            options.SignIn.RequireConfirmedAccount = false;
+        })
+        .AddRoles<IdentityRole>() //this is adding the default roles
+        .AddEntityFrameworkStores<ApplicationDbContext>(); //if we don't do this we can't create users or roles
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
