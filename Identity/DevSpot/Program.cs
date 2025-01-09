@@ -38,11 +38,23 @@ public class Program
             app.UseHsts();
         }
 
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+            if (!roleManager.RoleExistsAsync("Admin").Result)
+            {
+                var result = roleManager.CreateAsync(new IdentityRole("Admin")).Result;
+            }
+        }
+
         app.UseHttpsRedirection();
         app.UseRouting();
 
         app.UseAuthorization();
 
+        //here we are adding endpoints to the razor pages. Without this we cannot navigate to the pages
         app.MapRazorPages();
 
         app.MapStaticAssets();
