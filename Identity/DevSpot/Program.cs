@@ -1,3 +1,4 @@
+using DevSpot.Constants;
 using DevSpot.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -41,12 +42,10 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
-            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-            if (!roleManager.RoleExistsAsync("Admin").Result)
-            {
-                var result = roleManager.CreateAsync(new IdentityRole("Admin")).Result;
-            }
+            //since the method is static, we can use the .Wait() to await for the response
+            RoleSeeder.SeedRolesAsync(services).Wait();
+            UserSeeder.SeedUsersAsync(services).Wait();
         }
 
         app.UseHttpsRedirection();
