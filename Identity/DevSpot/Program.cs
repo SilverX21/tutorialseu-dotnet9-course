@@ -1,5 +1,7 @@
 using DevSpot.Constants;
 using DevSpot.Data;
+using DevSpot.Models;
+using DevSpot.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -25,6 +27,9 @@ public class Program
         })
         .AddRoles<IdentityRole>() //this is adding the default roles
         .AddEntityFrameworkStores<ApplicationDbContext>(); //if we don't do this we can't create users or roles
+
+        //DI
+        builder.Services.AddScoped<IRepository<JobPosting>, JobPostingRepository>();
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
