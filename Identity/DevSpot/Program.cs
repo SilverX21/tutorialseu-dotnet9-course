@@ -1,4 +1,3 @@
-using DevSpot.Constants;
 using DevSpot.Data;
 using DevSpot.Models;
 using DevSpot.Repositories;
@@ -62,9 +61,12 @@ public class Program
         app.MapRazorPages();
 
         app.MapStaticAssets();
+
+        //here we are adding endpoints to the controllers. Without this we cannot navigate to the pages
+        //we are pointing to the job postings controller as the home controller
         app.MapControllerRoute(
             name: "default",
-            pattern: "{controller=Home}/{action=Index}/{id?}")
+            pattern: "{controller=JobPostings}/{action=Index}/{id?}")
             .WithStaticAssets();
 
         app.Run();

@@ -60,7 +60,7 @@ namespace DevSpot.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("JobPostings");
+                    b.ToTable("JobPostings", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
