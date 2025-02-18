@@ -1,4 +1,5 @@
-﻿using DevSpot.Models;
+﻿using DevSpot.Constants;
+using DevSpot.Models;
 using DevSpot.Repositories;
 using DevSpot.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +27,15 @@ public class JobPostingsController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
+        if (User.IsInRole(Roles.Employer))
+        {
+            var allJobPostings = await _repository.GetAllAsync();
+            var userId = _userManager.GetUserId(User);
+            var filteredJobPostings = allJobPostings.Where(jp => jp.UserId == userId);
+
+            return View(filteredJobPostings);
+        }
+
         var jobPostings = await _repository.GetAllAsync();
 
         return View(jobPostings);
@@ -66,8 +76,44 @@ public class JobPostingsController : Controller
     }
 
     [HttpDelete]
+    [Authorize(Roles = "Admin,Employer")]
     public async Task<IActionResult> Delete(int id)
     {
+        var jobPosting = await _repository.GetByIdAsync(id);
+
+        if (jobPosting is null)
+        {
+            return NotFound();
+        }
+
+        var userId = _userManager.GetUserId(User);
+
+        if (User.IsInRole(Roles.Admin) is false && jobPosting.UserId != userId)
+        {
+            return Forbid();
+        }
+
+        await _repository.DeleteAsync(id);
+        return Ok();
+    }
+
+    [Authorize(Roles = "Admin,Employer")]
+    public async Task<IActionResult> DeleteEasy(int id)
+    {
+        var jobPosting = await _repository.GetByIdAsync(id);
+
+        if (jobPosting is null)
+        {
+            return NotFound();
+        }
+
+        var userId = _userManager.GetUserId(User);
+
+        if (User.IsInRole(Roles.Admin) is false && jobPosting.UserId != userId)
+        {
+            return Forbid();
+        }
+
         await _repository.DeleteAsync(id);
         return RedirectToAction(nameof(Index));
     }
