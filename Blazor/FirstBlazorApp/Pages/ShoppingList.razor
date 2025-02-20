@@ -1,0 +1,42 @@
+﻿<!--here we add our page to the app, so if we want to get to this page, we should access it like this: yourdomain.com/shoppinglist-->
+@page "/shoppinglist"
+
+@using FirstBlazorApp.Data
+
+<h3>ShoppingList</h3>
+
+<!--here we are binding the inputs to the properties, this will map the values-->
+<input placeholder="Grocery Name" @bind="groceryName" />
+<input placeholder="Grocery Price" @bind="groceryPrice" />
+<!--here we are saying that when the user clicks this button, it will trigger a click event, that is going to use the AddGrocery method-->
+<button @onclick="AddGrocery">Add Grocery</button>
+
+<ul>
+    @foreach (var grocery in groceries)
+    {
+        <li>@grocery.Name -- @grocery.Price</li>
+    }
+</ul>
+<h1>Total (@groceries.Sum(grocery => grocery.Price))</h1>
+
+
+@code {
+    private List<Grocery> groceries = new();
+
+    private string groceryName;
+    private float groceryPrice;
+
+    private void AddGrocery()
+    {
+        if (!string.IsNullOrWhiteSpace(groceryName) && groceryPrice > 0)
+        {
+            groceries.Add(new Grocery { Name = groceryName, Price = groceryPrice });
+
+            //here we clean our variables, so doesn't keep the old values in the UI
+            groceryName = string.Empty;
+            groceryPrice = 0;
+        }
+
+
+    }
+}
