@@ -2,41 +2,85 @@
 @page "/shoppinglist"
 
 @using FirstBlazorApp.Data
+<!--using the PageTitle component defines the name in the tab in the browser-->
+<PageTitle>@title</PageTitle>
+<h3>Shopping List</h3>
 
-<h3>ShoppingList</h3>
+<!--This is a .net component that has a form, we can set a model for it's properties like we have below, also we can say what it needs to do when the form is submited (OnSubmit)-->
+<EditForm Model="grocery" OnSubmit="AddGrocery">
+    <!--These components below will show the errors and validations that the model we have for the form, these validations are the ones you can see in the data annotations in the model-->
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <p>
+        <label>
+            Name:
+            <!--this is another .NET component. We are binding the grocery name to this field-->
+            <InputText @bind-Value="@grocery.Name" />
+        </label>
+    </p>
+    <p>
+        <label>
+            Price:
+            <InputNumber @bind-Value="@grocery.Price" />
+        </label>
+    </p>
+    <button type="submit">Add Grocery</button>
+</EditForm>
 
-<!--here we are binding the inputs to the properties, this will map the values-->
-<input placeholder="Grocery Name" @bind="groceryName" />
-<input placeholder="Grocery Price" @bind="groceryPrice" />
-<!--here we are saying that when the user clicks this button, it will trigger a click event, that is going to use the AddGrocery method-->
-<button @onclick="AddGrocery">Add Grocery</button>
+<table class="table table-sm">
+    <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th></th>
+    </tr>
 
-<ul>
     @foreach (var grocery in groceries)
     {
-        <li>@grocery.Name -- @grocery.Price</li>
+        <Item GroceryItem="grocery" OnGroceryPriceIncreased="OnGroceryPriceIncreased" />
     }
-</ul>
-<h1>Total (@groceries.Sum(grocery => grocery.Price))</h1>
+</table>
+
+<h1>Total (@sum)</h1>
 
 
 @code {
     private List<Grocery> groceries = new();
 
-    private string groceryName;
+    private string groceryName = string.Empty;
     private float groceryPrice;
+    private string title = "Our Gorceries";
+    private float sum = 0;
+    private Grocery grocery = new();
 
     private void AddGrocery()
     {
-        if (!string.IsNullOrWhiteSpace(groceryName) && groceryPrice > 0)
-        {
-            groceries.Add(new Grocery { Name = groceryName, Price = groceryPrice });
+        groceries.Add(grocery);
+        grocery = new(); //here we clean the inputs after adding the grocery
 
-            //here we clean our variables, so doesn't keep the old values in the UI
-            groceryName = string.Empty;
-            groceryPrice = 0;
-        }
+        // groceries.Add(new Grocery { Name = groceryName, Price = groceryPrice });
 
+        // //here we clean our variables, so doesn't keep the old values in the UI
+        // groceryName = string.Empty;
+        // groceryPrice = 0;
 
+        UpdateTotalAmount();
+    }
+
+    public void UpdateTotalAmount()
+    {
+        sum = groceries.Sum(g => g.Price);
+    }
+
+    //this is the method that is going to be called when the event is triggered for the button click
+    public void OnGroceryPriceIncreased()
+    {
+        UpdateTotalAmount();
     }
 }
+
+
+@* <!--here we are binding the inputs to the properties, this will map the values-->
+<input placeholder="Grocery Name" @bind="groceryName" />
+<input placeholder="Grocery Price" @bind="groceryPrice" />
+<!--here we are saying that when the user clicks this button, it will trigger a click event, that is going to use the AddGrocery method-->
+<button @onclick="AddGrocery">Add Grocery</button> *@

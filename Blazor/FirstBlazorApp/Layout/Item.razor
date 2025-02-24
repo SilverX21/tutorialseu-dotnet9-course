@@ -1,0 +1,37 @@
+﻿@using FirstBlazorApp.Data
+
+<table>
+    <tr>
+        <td>@GroceryItem.Name</td>
+        <td>@GroceryItem.Price</td>
+        <td>
+            <button class="btn-sm float-end" @onclick="AddPrice">+ Add 100</button>
+        </td>
+    </tr>
+</table>
+
+@code {
+    //this is a parameter that we are going to receive from the parent component
+    [Parameter]
+    public Grocery GroceryItem { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnGroceryPriceIncreased { get; set; }
+
+    private async Task AddPrice()
+    {
+        GroceryItem.Price += 100;
+
+        //here we are invoking the event, so the parent component can be notified
+        await OnGroceryPriceIncreased.InvokeAsync();
+    }
+}
+
+@{
+    //EventCallback<MouseEventArgs>:
+    //It’s a Blazor - specific delegate for handling events. In this case, it expects an argument of type MouseEventArgs, which is typically associated with mouse-related events(like clicks).
+
+    //Usage:
+    //In your component, when the grocery price is increased(perhaps through a button click), you’d call await OnGroceryPriceIncreased.InvokeAsync(e)(with e being the mouse event) to notify the parent component that the event occurred.
+    //This pattern is great for child-to-parent communication in Blazor, keeping your components decoupled yet interactive.
+}
