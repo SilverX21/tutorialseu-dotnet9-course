@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Scalar.AspNetCore;
 using WebDiaryAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +13,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
     options.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorApp", policy =>
+        policy.WithOrigins("https://localhost:7055") // Replace with your Blazor app's URL.
+              .AllowAnyHeader()
+              .AllowAnyMethod());
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -36,6 +43,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowBlazorApp");
 
 app.UseAuthorization();
 

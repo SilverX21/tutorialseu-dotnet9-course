@@ -1,12 +1,17 @@
 namespace WebDiaryAPI;
 
-public class WeatherForecast
+public partial class WeatherForecast : Forecast
 {
-    public DateOnly Date { get; set; }
+    public string? Description { get; set; }
 
-    public int TemperatureC { get; set; }
+    public Forecast[]? Forecast { get; set; }
+}
 
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+public class Forecast
+{
+    public string? Day { get; set; }
 
-    public string? Summary { get; set; }
+    public string? Temperature { get; set; }
+
+    public string? Wind { get; set; }
 }

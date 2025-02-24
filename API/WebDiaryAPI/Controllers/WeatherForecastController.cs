@@ -20,14 +20,22 @@ public class WeatherForecastController : ControllerBase
 
     // [HttpGet(Name = "GetWeatherForecast")] -> sets the name of this endpoint, if we want to use this endpoint we need to call it using this name
     [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    public WeatherForecast Get(string location)
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        var random = Random.Shared.Next(Summaries.Count());
+
+        return new WeatherForecast
         {
-            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        })
-        .ToArray();
+            Day = DateTime.Now.ToString("dd-MM-yyyy"),
+            Temperature = $"{Random.Shared.Next(-20, 55)} ºC",
+            Wind = $"{Random.Shared.Next(1, 250)} km/h",
+            Description = Summaries[random],
+            Forecast = Enumerable.Range(1, 5).Select(index => new Forecast
+            {
+                Day = $"{index}",
+                Temperature = $"{Random.Shared.Next(-20, 55)} ºC",
+                Wind = $"{Random.Shared.Next(1, 250)} km/h"
+            }).ToArray()
+        };
     }
 }

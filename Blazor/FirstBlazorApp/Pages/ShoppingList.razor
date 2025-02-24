@@ -1,6 +1,9 @@
 ﻿<!--here we add our page to the app, so if we want to get to this page, we should access it like this: yourdomain.com/shoppinglist-->
 @page "/shoppinglist"
 
+<!--here we are using the shoppingListLayout component to make this as an layout for the shopping list-->
+@layout ShoppingListLayout
+
 @using FirstBlazorApp.Data
 <!--using the PageTitle component defines the name in the tab in the browser-->
 <PageTitle>@title</PageTitle>

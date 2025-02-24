@@ -6,6 +6,9 @@
 <h1>Weather</h1>
 
 <p>This component demonstrates fetching data from the server.</p>
+<h4>Enter city</h4>
+<input type="text" @bind="@City" />
+<button @onclick="GetWeatherForecast">Search</button>
 
 @if (forecasts == null)
 {
@@ -13,23 +16,27 @@
 }
 else
 {
+    var today = DateTime.Today;
+    <h4>@City Today: @today.ToShortDateString()</h4>
+    <p>Wind: @forecasts.Wind</p>
+    <p>Temp (C): @forecasts.Temperature</p>
+    <p>Summary (C): @forecasts.Description</p>
+
     <table class="table">
         <thead>
             <tr>
                 <th>Date</th>
-                <th aria-label="Temperature in Celsius">Temp. (C)</th>
-                <th aria-label="Temperature in Farenheit">Temp. (F)</th>
-                <th>Summary</th>
+                <th>Temp. (C)</th>
+                <th>Wind</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var forecast in forecasts.Forecast)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@today.AddDays(int.Parse(forecast.Day)).ToShortDateString()</td>
+                    <td>@forecast.Temperature</td>
+                    <td>@forecast.Wind</td>
                 </tr>
             }
         </tbody>
@@ -37,21 +44,37 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private WeatherForecast? forecasts;
+    private string City = "Braga";
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+
+        var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7203/WeatherForecast?location=Braga");
+        var response = await Http.SendAsync(request);
+        forecasts = await response.Content.ReadFromJsonAsync<WeatherForecast>();
     }
 
-    public class WeatherForecast
+    private async Task GetWeatherForecast()
     {
-        public DateOnly Date { get; set; }
+        var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7203/WeatherForecast?location={City}");
+        var response = await Http.SendAsync(request);
+        forecasts = await response.Content.ReadFromJsonAsync<WeatherForecast>();
+    }
 
-        public int TemperatureC { get; set; }
+    public partial class WeatherForecast : Forecast
+    {
+        public string? Description { get; set; }
 
-        public string? Summary { get; set; }
+        public Forecast[]? Forecast { get; set; }
+    }
 
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public class Forecast
+    {
+        public string? Day { get; set; }
+
+        public string? Temperature { get; set; }
+
+        public string? Wind { get; set; }
     }
 }
